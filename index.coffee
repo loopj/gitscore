@@ -26,7 +26,7 @@ argv = optimist
 
 # Set up redis
 redisClient = redis.createClient(process.env.REDIS_PORT || 6379, process.env.REDIS_HOST || "127.0.0.1")
-redisClient.auth(process.env.REDIS_USER, process.env.REDIS_PASSWORD) if process.env.REDIS_USER
+redisClient.auth(process.env.REDIS_PASSWORD) if process.env.REDIS_PASSWORD
 
 # Set up express
 app = express.createServer();
