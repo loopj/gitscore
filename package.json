@@ -1,0 +1,14 @@
+{
+  "name": "gitscore.com",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.9",
+    "ejs": "latest",
+    "request": "latest",
+    "async": "latest",
+    "redis": "latest",
+    "hiredis": "latest",
+    "optimist": "latest"
+  }
+}

@@ -1,0 +1,223 @@
+@import "/css/reset.css";
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Quattrocento Sans', sans-serif;
+    background: url("/images/bg.gif");
+}
+
+p {
+    line-height: 1.4em;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 35px;
+    color: #444;
+
+    h1 {
+        font-family: 'Cookie', cursive;
+        font-size: 6em;
+        margin: 0;
+        padding: 0;
+        text-shadow: 1px 2px 0px #fff;
+    }
+    
+    h2 {
+        margin: 0;
+        padding: 0;
+        margin-top: -22px;
+        margin-left: 38px;
+        font-size: 1.1em;
+        font-weight: normal;
+        text-shadow: 0px 1px 0px #fff;
+    }
+}
+
+#main {
+    width: 600px;
+    margin: 0 auto;
+    min-height: 400px;
+    margin: 0 auto;
+    
+    section {
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: rgba(255,255,255,1);
+        box-shadow: inset 0 1px 10px rgba(0,0,0, 0.4);
+        border: 1px solid rgba(0,0,0,0.4);
+        border-radius: 10px;
+        
+        h2 {
+            margin: 0;
+            padding: 0;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+            
+            img {
+                margin-right: 12px;
+                width: 32px;
+                height: 32px;
+                vertical-align: middle;
+                
+                border: 0px solid black;
+                border-radius: 5px;
+            }
+            
+            span {
+                display: inline-block;
+                padding-top: 4px;
+                vertical-align: middle;
+            }
+        }
+        
+        table {
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1.8em;
+            
+            .position {
+                width: 40px;
+                color: #888;
+            }
+
+            .username {
+                a {
+                    color: inherit;
+                    text-decoration: none;
+                }
+                font-weight: bold;
+                img {
+                    width: 20px;
+                    height: 20px;
+                    vertical-align: middle;
+                    margin-right: 8px;
+                }
+                span {
+                    vertical-align: middle;
+                }
+            }
+            
+            .score {
+                text-align: right;
+                color: #888;
+            }
+            
+            .detail-score {
+                text-align: center;
+                color: #888;
+            }
+        }
+        
+        #results-pane {
+            position: relative;
+        }
+        
+        #results-score {
+            text-align: center;
+            font-size: 5em;
+        }
+        
+        #results-close {
+            position: absolute;
+            top: -20px;
+            right: -5px;
+            font-size: 3em;
+            color: #ccc;
+            cursor: pointer;
+        }
+        
+        #results-title {
+            a {
+                color: #444;
+                text-decoration: none;
+            }
+        }
+        
+        #results-position {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        #results-details {
+            table-layout: fixed;
+            margin-bottom: 10px;
+        }
+        
+        #error {
+            padding-top: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #c11;
+        }
+        
+        #share-score {
+            margin-top: 20px;
+            text-align: center;
+            h2 {
+                font-size: 1.5em;
+                color: #222;
+                margin-bottom:5px;
+            }
+            
+            .fb_edge_widget_with_comment {
+                width:48px !important;
+            }
+
+            .fb_edge_widget_with_comment iframe {
+                width:48px !important;
+            }
+
+            span.fb_edge_comment_widget.fb_iframe_widget iframe {
+                width:401px !important;
+            }
+
+            #facebook-share-score {
+                margin-left:20px;
+            }
+        }
+    }
+    
+    form {
+        width: 400px;
+        margin: 0 auto;
+
+        label {
+            display: block;
+            margin-bottom: 2px;
+            margin-left: 2px;
+            text-shadow: 0px 1px 0px #fff;
+        }
+
+        input {
+            width: 360px;
+            display: block;
+            padding: 10px 20px;
+            font-size: 2em;
+            background-color: rgba(255,255,255,0.9);
+
+            border: 1px solid rgba(0,0,0,0.2);
+            outline: none;
+            text-align: center;
+        }
+    }
+}
+
+.social-buttons {
+    height: 20px;
+}
+
+footer {
+    text-align: center;
+    margin-bottom: 30px;
+    
+    #author {
+        margin-top: 20px;
+        a {
+            color: black;
+        }
+    }
+}

@@ -1,0 +1,179 @@
+<section style="min-height: 100px;">
+  <div id="get-pane" class="pane">
+    <h2>Get Your Gitscore</h2>
+    <form id="form">
+      <input type="text" id="username" name="username" placeholder="github username, eg. defunkt">
+    </form>
+    <div id="error"></div>
+  </div>
+  
+  <div id="loading-pane" class="pane" style="display: none;">
+    <h2>Calculating Score...</h2>
+    <div style="text-align: center; margin-top: 30px;">
+      <img src="/images/loading.gif">
+    </div>
+  </div>
+  
+  <div id="results-pane" class="pane" style="display: none;">
+    <h2 id="results-title"></h2>
+    <h2 id="results-position"></h2>
+    <div id="results-score"></div>
+    <div id="results-close">&times;</div>
+    <table id="results-details">
+      <tr>
+        <th>Reputation</th>
+        <th>Contribution</th>
+        <th>Gist</th>
+      </tr>
+      <tr>
+        <td id="social-score" class="detail-score"></td>
+        <td id="repo-score" class="detail-score"></td>
+        <td id="gist-score" class="detail-score"></td>
+      </tr>
+    </table>
+    <div id="share-score">
+      <h2>Your gitscore? Share it!</h2>
+      <div class="social-buttons">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Top Gitscores</h2>
+  <% if(leaderboard && leaderboard.length) { %>
+    <table id="leaderboard">
+    <% for(var i=0; i<leaderboard.length; i++) { %>
+      <tr id="user-<%= leaderboard[i].username %>">
+        <td class="position"><%= i + 1 %></td>
+        <td class="username"><a href="javascript:void(0);" onclick="displayScore('<%= leaderboard[i].username %>');"><img src="/<%= leaderboard[i].username %>/avatar"><span><%= leaderboard[i].username %></span></a></td>
+        <td class="score"><%= leaderboard[i].score %></td>
+      </tr>
+    <% } %>
+    </table>
+  <% } else { %>
+    None yet
+  <% } %>
+</section>
+
+<script>
+function addCommas(nStr) {
+	nStr += '';
+	x = nStr.split('.');
+	x1 = x[0];
+	x2 = x.length > 1 ? '.' + x[1] : '';
+	var rgx = /(\d+)(\d{3})/;
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	return x1 + x2;
+}
+
+function displayScore(username) {
+  History.pushState({username: username}, username + "'s Gitscore", "/user/" + username);
+  try{_gaq.push(['_trackPageview', "/user/" + username]);}catch(err){}
+  
+  fetchScore(username);
+  
+  $('body,html').animate({
+		scrollTop: 0
+  }, 500);
+}
+
+function fetchScore(searchUsername) {
+  $(".pane:visible").fadeOut("fast", function () {
+    $("#loading-pane").fadeIn("fast");
+    
+    $.get("/user/" + searchUsername + "/calculate", function (response) {
+      $("#loading-pane").fadeOut("fast", function () {
+        if(response.error === undefined) {
+          // Update results detail
+          $("#results-title").html("<a href='https://github.com/" + searchUsername + "'><img src='" + response.user.avatar + "'>" + response.user.username + "'s Gitscore</a>");
+          $("#results-score").html(addCommas(response.scores.total));
+          
+          suffix = "th";
+          lastChar = response.position.toString().substr(-1);
+          if(lastChar == '1') {
+            if(response.position < 10 || response.position > 20) suffix = "st";
+          } else if(lastChar == '2') {
+            if(response.position < 10 || response.position > 20) suffix = "nd";
+          } else if (lastChar == '3') {
+            if(response.position < 10 || response.position > 20) suffix = "rd";
+          }
+          $("#results-position").html(response.position + suffix + " of " + response.totalScores);
+          var url = window.location.href
+          var tweet = "My gitscore is " + response.scores.total + ", which is " + response.position + suffix + " in the world! " + url + " What's yours?";
+          
+          var contents = '<a href="https://twitter.com/share" id="twitter-share-score" data-text="' + tweet + '" data-url="http://gitscore.com" data-via="gitscore" data-count="none" class="twitter-share-button">Tweet</a><div class="fb-like" id="facebook-share-score" data-href=' + url + ' data-send="false" data-layout="button_count" data-width="107" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>'
+          $("#share-score .social-buttons").html(contents);
+          try{twttr.widgets.load();}catch(err){}
+          try{FB.XFBML.parse();}catch(err){}
+          
+          // Update the lower table for specific results
+          $("#social-score").html(addCommas(response.scores.user));
+          $("#repo-score").html(addCommas(response.scores.repo));
+          $("#gist-score").html(addCommas(response.scores.gist));
+          
+          if(!$("tr#user-" + searchUsername + " .score").html(response.scores.total).length && response.position <= 50) {
+            row = '<tr id="user-' + searchUsername + '"><td class="position">' + response.position + '</td><td class="username"><a href="javascript:void(0);" onclick="displayScore(\'' + searchUsername + '\');"><img src="/' + searchUsername + '/avatar"><span>' + searchUsername + '</span></a></td><td class="score">' + response.scores.total + '</td></tr>';
+            if(response.position == 1) {
+              $('#leaderboard tbody tr').eq(0).before(row);
+            } else {
+              $('#leaderboard tbody tr').eq(response.position - 2).after(row);
+            }
+            
+            $("#leaderboard tbody tr").each(function(index, el) {
+              if( index >= response.position - 1) {
+                $(this).find(".position").html(index + 1);
+              }
+            });
+          }
+
+          $("#results-pane")
+            .animate({
+              opacity: "toggle",
+              height: "toggle"
+            });
+        } else {
+          $("#get-pane #error").html(response.error);
+          $("#get-pane #form").trigger("reset");
+          History.pushState({username: null}, "Gitscore", "/");
+          try{_gaq.push(['_trackPageview', '/']);}catch(err){}
+          $("#get-pane").fadeIn("fast");
+        }
+      });
+    });
+  });
+}
+
+<% if(username) { %>
+fetchScore("<%= username %>");
+<% } %>
+
+$("#form").submit(function () {
+  var searchUsername = $.trim($("#username").val());
+
+  if(searchUsername) {
+    displayScore(searchUsername);
+  }
+
+  return false;
+});
+
+$("#results-close").click(function () {
+  $("#username").val("");
+  $("#results-pane").animate({
+    opacity: "toggle",
+    height: "toggle"
+  }, function () {
+    $("#get-pane").fadeIn("fast");
+  });
+  
+  History.pushState({username: null}, "Gitscore", "/");
+  try{_gaq.push(['_trackPageview', '/']);}catch(err){}
+  
+  return false;
+});
+</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
