@@ -113,6 +113,7 @@ app.get '/:username/avatar', (req, res) ->
     generator: (generate) ->
       github.user username, (err, user) ->
         if err?
+          console.log "Error fetching avatar: #{err}"
           generate "", false
         else
           generate user.avatar_url, true
@@ -129,8 +130,10 @@ app.get '/:username/avatar', (req, res) ->
 cachedGet = (opts) ->
   redisClient.get opts.key, (err, response) ->
     if response
+      console.log "Cache hit for #{opts.key}"
       opts.callback response
     else
+      console.log "Cache miss for #{opts.key}"
       opts.generator (response, cacheResult) ->
         if cacheResult
           redisClient.set(opts.key, response)
@@ -162,6 +165,7 @@ fetchScoreData = (username, completeCallback) ->
     generator: (generate) ->
       github.userCombined username, (err, userData, throttle) ->
         if err?
+          console.log "Error fetching user data: #{err}"
           generate JSON.stringify({
             error: err
             }), false
