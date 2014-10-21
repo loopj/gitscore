@@ -9,6 +9,7 @@ github = require './github'
 
 LEADERBOARD_KEY = "gitscore:leaderboard"
 LEADERBOARD_RESULTS = 50
+MAX_LEADERBOARD_SIZE = process.env.MAX_LEADERBOARD_SIZE
 
 
 #
@@ -181,7 +182,8 @@ fetchScoreData = (username, completeCallback) ->
         scoreData = calculate_score userData.user, userData.repos, userData.gists
 
         # Add this score to the leaderboard
-        redisClient.zadd LEADERBOARD_KEY, scoreData.total, username
+        redisClient.zadd(LEADERBOARD_KEY, scoreData.total, username)
+        redisClient.zremrangebyrank(LEADERBOARD_KEY, 0, -MAX_LEADERBOARD_SIZE) if MAX_LEADERBOARD_SIZE
 
         # Done
         generate JSON.stringify({
