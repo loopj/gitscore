@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "coffee-script": "latest",
-    "express": "2.5.9",
-    "ejs": "latest",
-    "request": "latest",
     "async": "latest",
-    "redis": "latest",
+    "bugsnag": "^1.5.0",
+    "coffee-script": "latest",
+    "ejs": "latest",
+    "express": "2.5.9",
     "hiredis": "latest",
-    "optimist": "latest"
+    "optimist": "latest",
+    "redis": "latest",
+    "request": "latest"
   }
 }

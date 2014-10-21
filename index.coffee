@@ -3,6 +3,7 @@ express = require 'express'
 async = require 'async'
 optimist = require 'optimist'
 redis = require 'redis'
+bugsnag = require 'bugsnag'
 
 github = require './github'
 
@@ -24,6 +25,9 @@ argv = optimist
   )
   .argv
 
+# Set up bugsnag
+bugsnag.register(process.env.BUGSNAG_API_KEY) if process.env.BUGSNAG_API_KEY
+
 # Set up redis
 redisClient = redis.createClient(process.env.REDIS_PORT || 6379, process.env.REDIS_HOST || "127.0.0.1")
 redisClient.auth(process.env.REDIS_PASSWORD) if process.env.REDIS_PASSWORD
@@ -34,6 +38,7 @@ app = express.createServer();
 app.configure ->
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
+  app.use(bugsnag.requestHandler)
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.static(__dirname + '/public'));
@@ -42,6 +47,7 @@ app.configure "development", ->
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.configure "production", ->
+  app.use(bugsnag.errorHandler)
   app.use(express.errorHandler());
 
 console.log "Started gitscore on port #{argv.p}"
