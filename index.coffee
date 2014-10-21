@@ -240,3 +240,5 @@ calculate_score = (user, repos, gists) ->
   scores.total = scores.user + scores.repo + scores.gist
 
   return scores
+
+  
